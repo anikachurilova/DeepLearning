@@ -13,14 +13,14 @@ from matplotlib import pyplot as plt
 
 # import pdb;
 # pdb.set_trace()
-
-np.random.seed(0)
-python_random.seed(0)
-tf.random.set_seed(0)
+seed = 68
+np.random.seed(seed)
+python_random.seed(seed)
+tf.random.set_seed(seed)
 
 image_size = (224, 224)
 batch_size = 32
-seed = 68
+
 
 
 # Training
