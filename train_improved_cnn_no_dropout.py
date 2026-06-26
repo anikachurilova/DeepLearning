@@ -3,7 +3,6 @@ import random as python_random
 import tensorflow as tf
 from tensorflow import keras
 
-
 import csv
 
 import numpy as np
@@ -28,8 +27,8 @@ models_path = Path(__file__).resolve().parent / "models"
 figures_path = Path(__file__).resolve().parent / "figures"
 tables_path = Path(__file__).resolve().parent / "tables"
 
-# Improved CNN from scratch (with augmentation, early stopping and dropout)
-def create_improved_cnn():
+# Improved CNN from scratch (цшер data augmentation and early stopping, but no dropout.)
+def create_improved_cnn_no_dropout():
     inputs = keras.Input(shape=(image_size[0], image_size[1], 3))
 
     x = inputs
@@ -49,12 +48,9 @@ def create_improved_cnn():
 
     x = keras.layers.GlobalMaxPooling2D()(x)
 
-    # Dropout
-    x = keras.layers.Dropout(0.3)(x) # 30%
-
     outputs = keras.layers.Dense(len(train_dataset.class_names), activation="softmax")(x)
 
-    model = keras.Model(inputs, outputs, name="improved_cnn")
+    model = keras.Model(inputs, outputs, name="improved_cnn_no_dropout")
 
     model.compile(
         loss=keras.losses.categorical_crossentropy,
@@ -65,16 +61,18 @@ def create_improved_cnn():
     return model
 
 
-model = create_improved_cnn()
+model = create_improved_cnn_no_dropout()
 
 model.summary()
+
 
 # Add early stopping
 early_stopping = keras.callbacks.EarlyStopping(
     monitor="val_loss",
     patience=5,
-    restore_best_weights=True # it goes back to the epoch where validation loss was the best
+    restore_best_weights=True  # it goes back to the epoch where validation loss was the best
 )
+
 
 # Train
 history = model.fit(
@@ -84,9 +82,10 @@ history = model.fit(
     callbacks=[early_stopping]
 )
 
+
 # Save trained model and history
-model.save(models_path / "improved_cnn.keras")
-history_file = tables_path / "improved_cnn_history.csv"
+model.save(models_path / "improved_cnn_no_dropout.keras")
+history_file = tables_path / "improved_cnn_no_dropout_history.csv"
 
 with open(history_file, "w", newline="") as file:
     fieldnames = ["epoch"] + list(history.history.keys())
@@ -113,7 +112,7 @@ plt.plot(history.history["val_loss"])
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
 plt.legend(["train", "validation"])
-plt.title("Loss result for improved CNN")
+plt.title("Loss result for improved CNN without dropout")
 
 # Accuracy
 plt.subplot(1, 2, 2)
@@ -123,10 +122,10 @@ plt.ylim([0.5, 1.0])
 plt.xlabel("Epoch")
 plt.ylabel("Accuracy")
 plt.legend(["train", "validation"])
-plt.title("Accuracy result for improved CNN")
+plt.title("Accuracy result for improved CNN without dropout")
 
 plt.tight_layout()
-plt.savefig(figures_path / "improved_cnn_training_curves.png", dpi=300)
+plt.savefig(figures_path / "improved_cnn_no_dropout_training_curves.png", dpi=300)
 plt.show()
 
 
@@ -134,8 +133,8 @@ plt.show()
 score = model.evaluate(test_dataset)
 
 print()
-print("Improved CNN test loss:", score[0])
-print("Improved CNN test accuracy:", score[1])
+print("Improved CNN without dropout test loss:", score[0])
+print("Improved CNN without dropout test accuracy:", score[1])
 
 # Prediction
 y_pred_probs = model.predict(test_dataset)
@@ -151,7 +150,7 @@ y_test = np.argmax(y_test_onehot, axis=1)
 
 # Classification report
 print("Classification report:")
-print(classification_report(y_test, y_pred, target_names=test_dataset.class_names))
+print(classification_report(y_test,y_pred, target_names=test_dataset.class_names,))
 
 # Confusion matrix
 cm = confusion_matrix(y_test, y_pred)
@@ -161,7 +160,7 @@ plt.imshow(cm, cmap=plt.cm.Blues)
 
 plt.xlabel("Predicted class")
 plt.ylabel("Ground truth class")
-plt.title("Confusion matrix for improved CNN")
+plt.title("Confusion matrix for improved CNN without dropout")
 
 plt.xticks(
     ticks=np.arange(len(train_dataset.class_names)),
@@ -177,5 +176,5 @@ plt.yticks(
 plt.colorbar()
 plt.tight_layout()
 
-plt.savefig(figures_path / "improved_cnn_confusion_matrix.png", dpi=300)
+plt.savefig(figures_path / "improved_cnn_no_dropout_confusion_matrix.png", dpi=300)
 plt.show()
