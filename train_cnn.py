@@ -2,10 +2,12 @@ from pathlib import Path
 import random as python_random
 import csv
 
-import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
+
+import numpy as np
+
+from sklearn.metrics import confusion_matrix, classification_report
 
 from load_dataset import (
     train_dataset,
