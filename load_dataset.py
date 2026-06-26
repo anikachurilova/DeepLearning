@@ -21,8 +21,6 @@ tf.random.set_seed(seed)
 image_size = (224, 224)
 batch_size = 32
 
-
-
 # Training
 train_dataset = keras.utils.image_dataset_from_directory(
     "data/flowers_split/train",
@@ -52,113 +50,114 @@ test_dataset = keras.utils.image_dataset_from_directory(
     shuffle=False
 )
 
-# Some info about the dataset
-print("Flowers class names:", train_dataset.class_names)
-print("Amuont of classes:", len(train_dataset.class_names))
 
-# Check shapes
-for images, labels in train_dataset.take(1):
-    print("Images shape:", images.shape)
-    print("Images dtype:", images.dtype)
-    print("Labels shape:", labels.shape)
-    print("Labels dtype:", labels.dtype)
+if __name__ == "__main__":
 
+    # Some info about the dataset
+    print("Flowers class names:", train_dataset.class_names)
+    print("Amuont of classes:", len(train_dataset.class_names))
 
-# Class distribution
-def count_images(folder_path, class_names):
-    counts = []
-
-    for class_name in class_names:
-        class_path = os.path.join(folder_path, class_name)
-
-        image_names = os.listdir(class_path)
-        image_names = [
-            name for name in image_names
-            if name.lower().endswith((".jpg", ".jpeg", ".png"))
-        ]
-
-        counts.append(len(image_names))
-
-    return counts
+    # Check shapes
+    for images, labels in train_dataset.take(1):
+        print("Images shape:", images.shape)
+        print("Images dtype:", images.dtype)
+        print("Labels shape:", labels.shape)
+        print("Labels dtype:", labels.dtype)
 
 
-train_amount = count_images("data/flowers_split/train", train_dataset.class_names)
-validation_amount = count_images("data/flowers_split/validation", train_dataset.class_names)
-test_amount = count_images("data/flowers_split/test", train_dataset.class_names)
+    # Class distribution
+    def count_images(folder_path, class_names):
+        counts = []
 
-print("\nClass distribution:")
-print(f"{'Class':<12}{'Train':>8}{'Validation':>14}{'Test':>8}{'Total':>8}")
+        for class_name in class_names:
+            class_path = os.path.join(folder_path, class_name)
 
-for i, class_name in enumerate(train_dataset.class_names):
-    total = train_amount[i] + validation_amount[i] + test_amount[i]
+            image_names = os.listdir(class_path)
+            image_names = [
+                name for name in image_names
+                if name.lower().endswith((".jpg", ".jpeg", ".png"))
+            ]
 
-    print(
-        f"{class_name:<12}"
-        f"{train_amount[i]:>8}"
-        f"{validation_amount[i]:>14}"
-        f"{test_amount[i]:>8}"
-        f"{total:>8}"
-    )
+            counts.append(len(image_names))
 
-print()
-print(f"{'Total images:':<20}{sum(train_amount) + sum(validation_amount) + sum(test_amount)}")
-print(f"{'Total train:':<20}{sum(train_amount)}")
-print(f"{'Total validation:':<20}{sum(validation_amount)}")
-print(f"{'Total test:':<20}{sum(test_amount)}")
+        return counts
 
 
-# Flowers distribution plot
-total_amounts = []
+    train_amount = count_images("data/flowers_split/train", train_dataset.class_names)
+    validation_amount = count_images("data/flowers_split/validation", train_dataset.class_names)
+    test_amount = count_images("data/flowers_split/test", train_dataset.class_names)
 
-for i in range(len(train_dataset.class_names)):
-    total = train_amount[i] + validation_amount[i] + test_amount[i]
-    total_amounts.append(total)
+    print("\nClass distribution:")
+    print(f"{'Class':<12}{'Train':>8}{'Validation':>14}{'Test':>8}{'Total':>8}")
 
-print("\nOverall class distribution:")
-print(f"{'Class':<12}{'Total':>8}{'Percentage':>14}")
+    for i, class_name in enumerate(train_dataset.class_names):
+        total = train_amount[i] + validation_amount[i] + test_amount[i]
 
-total_images = sum(total_amounts)
+        print(
+            f"{class_name:<12}"
+            f"{train_amount[i]:>8}"
+            f"{validation_amount[i]:>14}"
+            f"{test_amount[i]:>8}"
+            f"{total:>8}"
+        )
 
-for i, class_name in enumerate(train_dataset.class_names):
-    percentage = total_amounts[i] / total_images * 100
+    print()
+    print(f"{'Total images:':<20}{sum(train_amount) + sum(validation_amount) + sum(test_amount)}")
+    print(f"{'Total train:':<20}{sum(train_amount)}")
+    print(f"{'Total validation:':<20}{sum(validation_amount)}")
+    print(f"{'Total test:':<20}{sum(test_amount)}")
 
-    print(
-        f"{class_name:<12}"
-        f"{total_amounts[i]:>8}"
-        f"{percentage:>13.2f}%"
-    )
+    # Flowers distribution plot
+    total_amounts = []
 
+    for i in range(len(train_dataset.class_names)):
+        total = train_amount[i] + validation_amount[i] + test_amount[i]
+        total_amounts.append(total)
 
-# Bar plot for total class distribution
-plt.figure(figsize=(8, 5))
+    print("\nOverall class distribution:")
+    print(f"{'Class':<12}{'Total':>8}{'Percentage':>14}")
 
-plt.bar(train_dataset.class_names, total_amounts)
+    total_images = sum(total_amounts)
 
-plt.xlabel("Flower class")
-plt.ylabel("Number of images")
-plt.title("Overall class distribution in the Flowers dataset")
-plt.xticks(rotation=25)
+    for i, class_name in enumerate(train_dataset.class_names):
+        percentage = total_amounts[i] / total_images * 100
 
-plt.tight_layout()
-project_path = Path(__file__).resolve().parent
-plt.savefig(project_path/"figures/class_distribution.png", dpi=300)
-plt.show()
+        print(
+            f"{class_name:<12}"
+            f"{total_amounts[i]:>8}"
+            f"{percentage:>13.2f}%"
+        )
 
+    # Bar plot for total class distribution
+    plt.figure(figsize=(8, 5))
 
-# Images examples
-plt.figure(figsize=(10, 10))
+    plt.bar(train_dataset.class_names, total_amounts)
 
-for images, labels in train_dataset.take(1):
-    for i in range(9):
-        plt.subplot(3, 3, i + 1)
+    plt.xlabel("Flower class")
+    plt.ylabel("Number of images")
+    plt.title("Overall class distribution in the Flowers dataset")
+    plt.xticks(rotation=25)
 
-        plt.imshow(images[i].numpy().astype("uint8"))
+    plt.tight_layout()
+    project_path = Path(__file__).resolve().parent
+    plt.savefig(project_path / "figures/class_distribution.png", dpi=300)
+    plt.show()
 
-        class_index = np.argmax(labels[i].numpy())
-        plt.title(train_dataset.class_names[class_index])
+    # Images examples
+    plt.figure(figsize=(10, 10))
 
-        plt.axis("off")
+    for images, labels in train_dataset.take(1):
+        for i in range(9):
+            plt.subplot(3, 3, i + 1)
 
-plt.tight_layout()
-plt.savefig("figures/example_flower_images.png", dpi=300)
-plt.show()
+            plt.imshow(images[i].numpy().astype("uint8"))
+
+            class_index = np.argmax(labels[i].numpy())
+            plt.title(train_dataset.class_names[class_index])
+
+            plt.axis("off")
+
+    plt.tight_layout()
+    plt.savefig("figures/example_flower_images.png", dpi=300)
+    plt.show()
+

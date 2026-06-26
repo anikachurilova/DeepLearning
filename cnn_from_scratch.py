@@ -14,7 +14,7 @@ python_random.seed(seed)
 tf.random.set_seed(seed)
 
 
-def build_cnn_from_scratch(num_classes=5):
+def build_cnn_from_scratch():
     inputs = keras.Input((image_size[0], image_size[1], 3)) # (224, 224, 3)
 
     x = inputs
@@ -34,8 +34,8 @@ def build_cnn_from_scratch(num_classes=5):
     return model
 
 
-if __name__ == "__main__":
-    model = build_cnn_from_scratch(num_classes=num_classes)
+def create_compiled_cnn():
+    model = build_cnn_from_scratch()
 
     model.compile(
         loss=keras.losses.categorical_crossentropy,
@@ -43,4 +43,9 @@ if __name__ == "__main__":
         metrics=["accuracy"]
     )
 
+    return model
+
+
+if __name__ == "__main__":
+    model = create_compiled_cnn()
     model.summary()
