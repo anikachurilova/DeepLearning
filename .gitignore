@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+submission_khalil/
+submission_khalil.zip
+evaluate_finetuned.py
+khalil_transfer_learning.py
+khalil_transfer_learning_frozen.py
+figures/khalil_frozen_before_finetuning_accuracy.png
+figures/khalil_frozen_before_finetuning_confusion_matrix.png
+figures/khalil_frozen_before_finetuning_loss.png
+figures/khalil_transfer_accuracy.png
+figures/khalil_transfer_confusion_matrix.png
+figures/khalil_transfer_loss.png
+models/khalil_mobilenetv2_before_finetuning.keras
+models/khalil_mobilenetv2_transfer.keras
