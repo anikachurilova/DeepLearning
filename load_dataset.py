@@ -1,14 +1,18 @@
 from pathlib import Path
-import os
 
+import numpy as np
+import os
 import tensorflow as tf
 from tensorflow import keras
-import numpy as np
+
 import random as python_random
+
 
 from matplotlib import pyplot as plt
 
 
+# import pdb;
+# pdb.set_trace()
 seed = 68
 np.random.seed(seed)
 python_random.seed(seed)
@@ -16,7 +20,6 @@ tf.random.set_seed(seed)
 
 image_size = (224, 224)
 batch_size = 32
-
 
 # Training
 train_dataset = keras.utils.image_dataset_from_directory(
@@ -50,9 +53,9 @@ test_dataset = keras.utils.image_dataset_from_directory(
 
 if __name__ == "__main__":
 
-    # Dataset info
+    # Some info about the dataset
     print("Flowers class names:", train_dataset.class_names)
-    print("Amount of classes:", len(train_dataset.class_names))
+    print("Amuont of classes:", len(train_dataset.class_names))
 
     # Check shapes
     for images, labels in train_dataset.take(1):
@@ -60,6 +63,7 @@ if __name__ == "__main__":
         print("Images dtype:", images.dtype)
         print("Labels shape:", labels.shape)
         print("Labels dtype:", labels.dtype)
+
 
     # Class distribution
     def count_images(folder_path, class_names):
@@ -124,6 +128,7 @@ if __name__ == "__main__":
             f"{percentage:>13.2f}%"
         )
 
+    # Bar plot for total class distribution
     plt.figure(figsize=(8, 5))
 
     plt.bar(train_dataset.class_names, total_amounts)
